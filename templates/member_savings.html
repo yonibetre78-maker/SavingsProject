@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Member Savings</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #244493;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header h2 {
+            margin: 0 0 10px 0;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            background: #555;
+            padding: 8px 12px;
+            border-radius: 7px;
+            display: inline-block;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 25px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 20px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .member-name {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .phone {
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .total {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #244493;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .record {
+            padding: 14px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .amount {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .date {
+            color: #888;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .empty {
+            color: #777;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+
+        <h2>💰 Member Savings</h2>
+
+        <a class="back" href="{{ url_for('group_details', group_id=group['id']) }}">
+            ← Back to Group
+        </a>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <!-- Member Information -->
+
+        <div class="card">
+
+            <div class="member-name">
+                👤 {{ member['name'] }}
+            </div>
+
+            <div class="phone">
+                📱 {{ member['phone'] }}
+            </div>
+
+        </div>
+
+
+        <!-- Total Savings -->
+
+        <div class="card">
+
+            <h3>💰 Total Savings</h3>
+
+            <div class="total">
+                {{ "%.2f"|format(total) }} Birr
+            </div>
+
+        </div>
+
+
+        <!-- Add Savings -->
+
+        <div class="card">
+
+            <h2>➕ Add Savings</h2>
+
+            <form method="POST">
+
+                <input
+                    type="number"
+                    name="amount"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="Enter amount"
+                    required
+                >
+
+                <button type="submit">
+                    💰 Add Savings
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- Savings History -->
+
+        <div class="card">
+
+            <h2>📋 Savings History</h2>
+
+            {% if records %}
+
+                {% for record in records %}
+
+                    <div class="record">
+
+                        <div class="amount">
+                            {{ "%.2f"|format(record['amount']) }} Birr
+                        </div>
+
+                        <div class="date">
+                            {{ record['created_at'] }}
+                        </div>
+
+                    </div>
+                    {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    No savings yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>

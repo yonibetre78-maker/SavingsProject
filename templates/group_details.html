@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ group['name'] }}</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #244493, #4169c1);
+            color: white;
+            padding: 25px 20px 35px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.18);
+            padding: 9px 13px;
+            border-radius: 9px;
+        }
+
+        .header h1 {
+            margin: 25px 0 0;
+            font-size: 27px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: -20px auto 30px;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin-bottom: 15px;
+            border-radius: 20px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+        }
+
+        .total {
+            font-size: 32px;
+            font-weight: bold;
+            color: #244493;
+            margin-top: 8px;
+        }
+
+        .label {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 9px;
+            background: #244493;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .member {
+            padding: 17px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .member:last-child {
+            border-bottom: none;
+        }
+
+        .member-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .member-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .member-phone {
+            color: #777;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .member-saving {
+            color: #244493;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .saving-btn {
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            background: #244493;
+            color: white;
+        }
+
+        .remove-btn {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #eee;
+            color: #c62828;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="header-top">
+
+            <strong>👥 Savings Group</strong>
+
+            <a class="back" href="{{ url_for('group') }}">
+                ← Groups
+            </a>
+            </div>
+
+        <h1>{{ group['name'] }}</h1>
+
+    </div>
+
+
+    <div class="container">
+
+
+        <!-- TOTAL GROUP SAVINGS -->
+
+        <div class="card">
+
+            <div class="label">
+                💰 Total Group Savings
+            </div>
+
+            <div class="total">
+                {{ "%.2f"|format(total_group_savings) }} Birr
+            </div>
+
+        </div>
+
+
+        <!-- STATS -->
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    👤
+                </div>
+
+                <div class="stat-number">
+                    {{ member_count }}
+                </div>
+
+                <div class="label">
+                    Members
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+                <div class="stat-number">
+                    {{ "%.2f"|format(total_group_savings) }}
+                </div>
+
+                <div class="label">
+                    Total Birr
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ADD MEMBER -->
+
+        <div class="card">
+
+            <h2>➕ Add Member</h2>
+
+            <form
+                method="POST"
+                action="/group/{{ group['id'] }}/add-member"
+            >
+
+                <input
+                    type="text"
+                    name="phone"
+                    placeholder="Enter member phone number"
+                    required
+                >
+
+                <button class="add-btn" type="submit">
+                    Add Member
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- MEMBERS -->
+
+        <div class="card">
+
+            <h2>👥 Members</h2>
+
+            {% if members %}
+
+                {% for member in members %}
+
+                    <div class="member">
+
+                        <div class="member-top">
+
+                            <div>
+
+                                <div class="member-name">
+                                    👤 {{ member['name'] }}
+                                </div>
+
+                                <div class="member-phone">
+                                    📱 {{ member['phone'] }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- MEMBER TOTAL -->
+
+                        <div class="member-saving">
+
+                            💰
+                            {{ "%.2f"|format(member['total_savings']) }}
+                            Birr
+
+                        </div>
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="actions">
+
+                            <a
+                                class="saving-btn"
+                                href="/group/{{ group['id'] }}/member/{{ member['id'] }}/savings"
+                            >
+                                💰 Savings
+                            </a>
+
+
+                            <form
+                                method="POST"
+                                action="/group/{{ group['id'] }}/remove-member/{{ member['id'] }}"
+                            >
+
+                                <button
+                                    class="remove-btn"
+                                    type="submit"
+                                >
+                                    ❌ Remove
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    No members yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
