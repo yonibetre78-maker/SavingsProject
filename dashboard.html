@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Savings Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: linear-gradient(135deg, #244493, #4169c1);
+            color: white;
+            padding: 28px 22px 35px;
+            border-radius: 0 0 28px 28px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logout {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.18);
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .welcome {
+            margin-top: 28px;
+        }
+
+        .welcome small {
+            opacity: 0.85;
+        }
+
+        .welcome h1 {
+            margin: 7px 0 0;
+            font-size: 27px;
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 750px;
+            margin: -20px auto 30px;
+            padding: 0 18px;
+        }
+
+        /* TOTAL CARD */
+
+        .total-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .total-title {
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        .total {
+            font-size: 35px;
+            font-weight: bold;
+            margin-top: 8px;
+            color: #244493;
+        }
+
+        /* STATS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+        }
+
+        .stat-icon {
+            font-size: 25px;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .stat-title {
+            color: #777;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* TRANSACTIONS */
+
+        .card {
+            background: white;
+            padding: 22px;
+            margin-top: 15px;
+            border-radius: 20px;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+        }
+
+        .card h2 {
+            font-size: 19px;
+            margin-top: 0;
+        }
+
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .transaction-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #eaf0ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .transaction-title {
+            font-weight: bold;
+        }
+
+        .date {
+            color: #999;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #244493;
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+
+        /* BUTTONS */
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .button {
+            text-decoration: none;
+            text-align: center;
+            padding: 15px;
+            border-radius: 14px;
+            font-weight: bold;
+            background: #244493;
+            color: white;
+        }
+
+        .button.secondary {
+            background: white;
+            color: #244493;
+            border: 1px solid #dce3f5;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 500px) {
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .total {
+                font-size: 31px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="header-top">
+
+            <div class="logo">
+                💰 Savings
+            </div>
+
+            <a class="logout" href="{{ url_for('logout') }}">
+                Logout
+            </a>
+
+        </div>
+
+        <div class="welcome">
+
+            <small>Welcome back 👋</small>
+
+            <h1>{{ name }}</h1>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN -->
+
+    <div class="container">
+
+
+        <!-- TOTAL SAVINGS -->
+
+        <div class="total-card">
+
+            <div class="total-title">
+                Total Savings
+            </div>
+
+            <div class="total">
+                {{ "%.2f"|format(total) }} Birr
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    💰
+                </div>
+
+                <div class="stat-number">
+                    {{ transaction_count }}
+                </div>
+
+                <div class="stat-title">
+                    Transactions
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-icon">
+                    📈
+                </div>
+
+                <div class="stat-number">
+                    {{ "%.2f"|format(total) }}
+                </div>
+
+                <div class="stat-title">
+                    Saved Amount
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT TRANSACTIONS -->
+
+        <div class="card">
+
+            <h2>
+                📋 Recent Transactions
+            </h2>
+
+
+            {% if recent_transactions %}
+
+                {% for transaction in recent_transactions %}
+
+                    <div class="transaction">
+
+                        <div class="transaction-left">
+
+                            <div class="transaction-icon">
+                                💰
+                            </div>
+
+                            <div>
+
+                                <div class="transaction-title">
+                                    Savings
+                                </div>
+
+                                <div class="date">
+                                    {{ transaction['created_at'] }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="amount">
+                            +{{ "%.2f"|format(transaction['amount']) }} Birr
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    No transaction yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="buttons">
+
+            <a class="button" href="{{ url_for('savings') }}">
+                💰 My Savings
+            </a>
+
+            <a class="button secondary" href="{{ url_for('group') }}">
+                👥 My Groups
+            </a>
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>

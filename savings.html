@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Savings - Savings Project</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #244493;
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            background: #555;
+            padding: 9px 14px;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .total {
+            font-size: 32px;
+            font-weight: bold;
+            color: #244493;
+            margin-top: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #244493;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1b3475;
+        }
+
+        .transaction {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #244493;
+        }
+
+        .date {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .empty {
+            color: #777;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .transaction {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+
+        <h2>💰 Savings Project</h2>
+
+        <a class="back" href="/dashboard">
+            ← Dashboard
+        </a>
+
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>💰 Total Savings</h2>
+
+            <div class="total">
+                {{ "%.2f"|format(total) }} Birr
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <h2>➕ Add Savings</h2>
+
+            <form method="POST">
+
+                <label for="amount">
+                    Amount (Birr)
+                </label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="Enter amount"
+                    required
+                >
+
+                <button type="submit">
+                    💰 Save Money
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="card">
+
+            <h2>📋 Transaction History</h2>
+
+            {% if records %}
+
+                {% for record in records %}
+
+                    <div class="transaction">
+
+                        <div>
+
+                            <div class="amount">
+                                + {{ "%.2f"|format(record["amount"]) }} Birr
+                            </div>
+                            <div class="date">
+                                {{ record["created_at"] }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+                    No savings transactions yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+</html>

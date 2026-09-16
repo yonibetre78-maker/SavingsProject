@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Savings Project</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f4f8;
+            margin: 0;
+        }
+
+        .box {
+            width: 350px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #244493;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #244493;
+            color: white;
+            border: none;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>ይመዝገቡ</h1>
+
+    <p>ወደ Savings Project እንኳን በደህና መጡ።</p>
+
+    <form method="POST">
+
+        <input type="text"
+               name="name"
+               placeholder="ሙሉ ስም"
+               required>
+
+        <input type="tel"
+               name="phone"
+               placeholder="ስልክ ቁጥር"
+               required>
+
+        <input type="password"
+               name="password"
+               placeholder="የይለፍ ቃል"
+               required>
+
+        <button type="submit">
+            ይመዝገቡ
+        </button>
+
+    </form>
+
+    <a href="/login">መለያ አለዎት? Login</a>
+
+</div>
+
+</body>
+</html>
