@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Groups - Savings Project</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #244493;
+            color: white;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            background: #555;
+            padding: 9px 14px;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #244493;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .group {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .group-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .date {
+            color: #777;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+
+        <h2>👥 Savings Groups</h2>
+
+        <a class="back" href="/dashboard">
+            ← Dashboard
+        </a>
+
+    </div>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>➕ Create New Group</h2>
+
+            <form method="POST">
+
+                <input
+                    type="text"
+                    name="group_name"
+                    placeholder="Enter group name"
+                    required
+                >
+
+                <button type="submit">
+                    Create Group
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>📋 My Groups</h2>
+
+            {% if groups %}
+
+                {% for group in groups %}
+
+                    <div class="group">
+                    <div class="group-name">
+                      <a href="/group/{{ group['id'] }}">
+                        👥 {{ group["name"] }}
+                      </a>
+                    </div>
+
+                        <div class="date">
+                            Created: {{ group["created_at"] }}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>
+                    You have not created any groups yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+</html>

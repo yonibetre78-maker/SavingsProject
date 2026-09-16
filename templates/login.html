@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Savings Project</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f4f8;
+            margin: 0;
+        }
+
+        .box {
+            width: 350px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #244493;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #244493;
+            color: white;
+            border: none;
+            margin-top: 10px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>መግቢያ</h1>
+
+    <p>ወደ Savings Project ይግቡ።</p>
+
+    <form method="POST">
+
+        <input type="tel"
+               name="phone"
+               placeholder="ስልክ ቁጥር"
+               required>
+
+        <input type="password"
+               name="password"
+               placeholder="የይለፍ ቃል"
+               required>
+
+        <button type="submit">
+            ግባ
+        </button>
+
+    </form>
+
+    <a href="/register">
+        አዲስ መለያ ይፍጠሩ
+    </a>
+
+</div>
+
+</body>
+</html>
