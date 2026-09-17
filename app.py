@@ -322,20 +322,16 @@ def savings():
 
 @app.route("/group", methods=["GET", "POST"])
 def group():
-
     if "user_id" not in session:
         return redirect(url_for("login"))
 
     conn = get_db()
 
     if request.method == "POST":
-
         group_name = request.form["group_name"].strip()
 
         if not group_name:
-
             conn.close()
-
             return "Please enter a group name.", 400
 
         conn.execute(
@@ -347,19 +343,24 @@ def group():
         )
 
         conn.commit()
-
         conn.close()
 
         return redirect(url_for("group"))
 
     groups = conn.execute(
         """
-        SELECT id, name, created_at
+        SELECT DISTINCT
+            groups.id,
+            groups.name,
+            groups.created_at
         FROM groups
-        WHERE owner_id = ?
-        ORDER BY created_at DESC
+        LEFT JOIN group_members
+        ON groups.id = group_members.group_id
+        WHERE groups.owner_id = ?
+           OR group_members.user_id = ?
+        ORDER BY groups.created_at DESC
         """,
-        (session["user_id"],)
+        (session["user_id"], session["user_id"])
     ).fetchall()
 
     conn.close()
@@ -374,28 +375,37 @@ def group():
 # GROUP DETAILS
 # =========================
 
-# GROUP DETAILS
 @app.route("/group/<int:group_id>")
 def group_details(group_id):
-
     if "user_id" not in session:
         return redirect(url_for("login"))
 
     conn = get_db()
 
+    # Owner OR group member can open the group
     group = conn.execute(
         """
-        SELECT *
+        SELECT groups.*
         FROM groups
-        WHERE id = ? AND owner_id = ?
+        LEFT JOIN group_members
+        ON groups.id = group_members.group_id
+        WHERE groups.id = ?
+        AND (
+            groups.owner_id = ?
+            OR group_members.user_id = ?
+        )
         """,
-        (group_id, session["user_id"])
+        (group_id, session["user_id"], session["user_id"])
     ).fetchone()
 
     if not group:
         conn.close()
-        return "Group not found.", 404
+        return "Group not found or you are not a member.", 404
 
+    # Check if current user is the owner
+    is_owner = group["owner_id"] == session["user_id"]
+
+    # All members and their total savings
     members = conn.execute(
         """
         SELECT
@@ -421,7 +431,7 @@ def group_details(group_id):
         (group_id, group_id)
     ).fetchall()
 
-    # TOTAL GROUP SAVINGS
+    # Total group savings
     total_group_savings = conn.execute(
         """
         SELECT COALESCE(SUM(amount), 0)
@@ -431,7 +441,7 @@ def group_details(group_id):
         (group_id,)
     ).fetchone()[0]
 
-    # NUMBER OF MEMBERS
+    # Number of members
     member_count = conn.execute(
         """
         SELECT COUNT(*)
@@ -448,9 +458,9 @@ def group_details(group_id):
         group=group,
         members=members,
         total_group_savings=total_group_savings,
-        member_count=member_count
+        member_count=member_count,
+        is_owner=is_owner
     )
-
 
 # =========================
 # ADD MEMBER
@@ -600,21 +610,29 @@ def member_savings(group_id, user_id):
 
     conn = get_db()
 
+    # Get group
     group = conn.execute(
         """
-        SELECT id, name
+        SELECT id, name, owner_id
         FROM groups
-        WHERE id = ? AND owner_id = ?
+        WHERE id = ?
         """,
-        (group_id, session["user_id"])
+        (group_id,)
     ).fetchone()
 
     if not group:
-
         conn.close()
-
         return "Group not found.", 404
 
+    # Check if current user is the group owner
+    is_owner = group["owner_id"] == session["user_id"]
+
+    # Normal member can only access their own savings
+    if not is_owner and user_id != session["user_id"]:
+        conn.close()
+        return "You can only view your own savings.", 403
+
+    # Check that target user is a member of this group
     member = conn.execute(
         """
         SELECT
@@ -631,34 +649,33 @@ def member_savings(group_id, user_id):
     ).fetchone()
 
     if not member:
-
         conn.close()
         return "Member not found.", 404
 
+    # Add saving
     if request.method == "POST":
+
+        # Only owner or the member themselves can add savings
+        if not is_owner and user_id != session["user_id"]:
+            conn.close()
+            return "You cannot add savings for another member.", 403
 
         amount_text = request.form["amount"].strip()
 
         if not amount_text:
-
             conn.close()
-
             return "Please enter an amount.", 400
 
         valid_number = amount_text.replace(".", "", 1).isdigit()
 
         if not valid_number:
-
             conn.close()
-
             return "Please enter a valid number.", 400
 
         amount = float(amount_text)
 
         if amount <= 0:
-
             conn.close()
-
             return "Amount must be greater than 0.", 400
 
         conn.execute(
@@ -672,9 +689,12 @@ def member_savings(group_id, user_id):
 
         conn.commit()
 
+    # Get saving records
     records = conn.execute(
         """
-        SELECT amount, created_at
+        SELECT
+            amount,
+            created_at
         FROM group_savings
         WHERE group_id = ?
         AND user_id = ?
@@ -683,6 +703,7 @@ def member_savings(group_id, user_id):
         (group_id, user_id)
     ).fetchall()
 
+    # Get member total savings
     total = conn.execute(
         """
         SELECT COALESCE(SUM(amount), 0)
@@ -700,9 +721,9 @@ def member_savings(group_id, user_id):
         group=group,
         member=member,
         records=records,
-        total=total
+        total=total,
+        is_owner=is_owner
     )
-
 
 # =========================
 # LOGOUT

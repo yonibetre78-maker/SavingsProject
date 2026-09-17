@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -76,6 +77,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+            margin-bottom: 15px;
         }
 
         .stat {
@@ -182,7 +184,9 @@
 
 </head>
 
+
 <body>
+
 
     <!-- HEADER -->
 
@@ -191,11 +195,14 @@
         <div class="header-top">
 
             <strong>👥 Savings Group</strong>
-
-            <a class="back" href="{{ url_for('group') }}">
+            <a
+                class="back"
+                href="{{ url_for('group') }}"
+            >
                 ← Groups
             </a>
-            </div>
+
+        </div>
 
         <h1>{{ group['name'] }}</h1>
 
@@ -260,7 +267,9 @@
         </div>
 
 
-        <!-- ADD MEMBER -->
+        <!-- ADD MEMBER - OWNER ONLY -->
+
+        {% if is_owner %}
 
         <div class="card">
 
@@ -278,13 +287,18 @@
                     required
                 >
 
-                <button class="add-btn" type="submit">
+                <button
+                    class="add-btn"
+                    type="submit"
+                >
                     Add Member
                 </button>
 
             </form>
 
         </div>
+
+        {% endif %}
 
 
         <!-- MEMBERS -->
@@ -293,84 +307,131 @@
 
             <h2>👥 Members</h2>
 
+
             {% if members %}
+
 
                 {% for member in members %}
 
-                    <div class="member">
 
-                        <div class="member-top">
+                <div class="member">
 
-                            <div>
 
-                                <div class="member-name">
-                                    👤 {{ member['name'] }}
-                                </div>
+                    <!-- MEMBER INFORMATION -->
 
-                                <div class="member-phone">
-                                    📱 {{ member['phone'] }}
-                                </div>
+                    <div class="member-top">
+
+                        <div>
+
+                            <div class="member-name">
+
+                                👤 {{ member['name'] }}
+
+                            </div>
+
+
+                            <div class="member-phone">
+
+                                📱 {{ member['phone'] }}
 
                             </div>
 
                         </div>
 
-
-                        <!-- MEMBER TOTAL -->
-
-                        <div class="member-saving">
-
-                            💰
-                            {{ "%.2f"|format(member['total_savings']) }}
-                            Birr
-
-                        </div>
+                    </div>
 
 
-                        <!-- ACTIONS -->
+                    <!-- MEMBER TOTAL SAVING -->
 
-                        <div class="actions">
+                    <div class="member-saving">
 
-                            <a
-                                class="saving-btn"
-                                href="/group/{{ group['id'] }}/member/{{ member['id'] }}/savings"
-                            >
-                                💰 Savings
-                            </a>
-
-
-                            <form
-                                method="POST"
-                                action="/group/{{ group['id'] }}/remove-member/{{ member['id'] }}"
-                            >
-
-                                <button
-                                    class="remove-btn"
-                                    type="submit"
-                                >
-                                    ❌ Remove
-                                </button>
-
-                            </form>
-
-                        </div>
+                        💰
+                        {{ "%.2f"|format(member['total_savings']) }}
+                        Birr
 
                     </div>
 
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions">
+
+
+                        <!-- OWNER -->
+
+                        {% if is_owner %}
+
+
+                        <!-- Owner can view this member's savings -->
+
+                        <a
+                            class="saving-btn"
+                            href="/group/{{ group['id'] }}/member/{{ member['id'] }}/savings"
+                        >
+                            💰 Savings
+                        </a>
+
+
+                        <!-- Owner can remove member -->
+
+                        <form
+                            method="POST"
+                            action="/group/{{ group['id'] }}/remove-member/{{ member['id'] }}"
+                        >
+
+                            <button
+                                class="remove-btn"
+                                type="submit"
+                            >
+                                ❌ Remove
+                            </button>
+
+                        </form>
+
+
+                        <!-- NORMAL MEMBER -->
+
+                        {% elif member['id'] == session['user_id'] %}
+                        <!-- Member can ONLY open own savings -->
+
+                        <a
+                            class="saving-btn"
+                            href="/group/{{ group['id'] }}/member/{{ member['id'] }}/savings"
+                        >
+                            💰 My Savings
+                        </a>
+
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                </div>
+
+
                 {% endfor %}
+
 
             {% else %}
 
+
                 <div class="empty">
+
                     No members yet.
+
                 </div>
 
+
             {% endif %}
+
 
         </div>
 
 
     </div>
+
 
 </body>
 
